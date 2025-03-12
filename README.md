@@ -26,3 +26,15 @@ union(set_B) → Similar to SQL’s UNION; combines two sets and removes duplica
 intersection(set_B) → Returns only the common elements found in both sets.
 difference(set_B) → Returns elements that exist only in the first set, removing common values.
 symmetric_difference(set_B) → Removes common elements and returns only the unique elements from both sets.
+
+
+Why Use NumPy Instead of Lists, Tuples, Sets, or Dicts?
+
+1:-Performance: NumPy arrays are significantly faster than Python lists due to their fixed datatype 
+                and optimized C backend(NumPy's core operations are implemented in C,).
+            
+2:-Memory Efficiency: NumPy uses contiguous memory allocation, which makes it more space-efficient than lists.   
+3:-Vectorized Operations: Unlike lists, NumPy allows operations to be applied directly to the entire array, 
+        avoiding Python loops.
+        
+4:-Advanced Mathematical Functions: NumPy supports linear algebra, statistics, and more, which are not available in built-in       data structures.
