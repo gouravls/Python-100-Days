@@ -1,0 +1,10 @@
+Step to open or work in vs code:
+1:-Open Anaconda(it will take few mins)
+2:-Search the vs code and click and open
+3:-Check the Version of python
+python --Version
+4:-create virtual environment
+python -m venv venv
+5:- Write your virtual environment name venv/S press (tab) it will write scripts and venv/Scripts/A press (tab) it will activate your virtual environment
+6:-Use pip install pandas
+(what ever libarary you want to install)
