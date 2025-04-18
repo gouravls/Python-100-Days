@@ -1,0 +1,6 @@
+1. Download ollama
+2. Go to cmd and type ollama
+3. Ollama pull mistral
+4. Ollama run mistral 
+5. Write any message or you can create your application and use ollama there
+6: Ctrl+z for exit
