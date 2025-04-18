@@ -1,0 +1,10 @@
+How to work with Ollama:-
+
+1. Download ollama
+2. Go to cmd and type ollama
+3. Ollama pull mistral
+4. Ollama run mistral
+5:- Enter any message
+6:- Get the Result
+7:- Ctrl+z
+
