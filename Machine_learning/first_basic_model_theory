@@ -1,0 +1,122 @@
+import pandas as pd 
+import matplotlib.pyplot as plt 
+import seaborn as sns 
+import gradio as gr 
+import streamlit as st 
+import ollama 
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
+
+print("What is machine learning")
+print("Let's try to understand machine learning with an example. Suppose you are telling your son whether a number is odd or even.")
+print("How would you teach him? You'd give him examples like: 2 is an even number, 3 is an odd number, 4 is an even number.")
+print("After seeing those examples, he might say: 'Ohh, even numbers are divisible by 2, and odd numbers are not divisible by 2.'")
+print("In the same way, we give the computer examples — like this number is even and that number is odd. Through patterns, the computer learns.")
+
+print("""In machine learning we use some basic terms:
+  x        --> Input 
+  y        --> Output
+  x_train  --> Questions used for learning
+  y_train  --> Answers used for learning
+  x_test   --> New questions (to test the computer)
+  y_test   --> Actual answers (to check if the computer is right or not)
+  model.fit()  --> Teaching the computer using x_train and y_train
+  model.predict() --> Asking the computer to guess the answers
+  best_fit() --> The best version of the model
+""")
+
+# for mutiplelines in print statement we can use """(thriple quotes)
+
+st.title("Introduction to Machine Learning")
+st.subheader("What is machine learning")
+st.write("Machine learning is a way of teaching computers to make decisions or predictions based on data, "
+    "similar to how we learn from examples.")
+st.subheader("Example to Understand ML")
+st.write(
+    "Imagine you're teaching your child how to recognize even and odd numbers.\n\n"
+    "You give examples like:\n"
+    "- 2 is even\n"
+    "- 3 is odd\n"
+    "- 4 is even\n\n"
+    "After observing, your child understands: 'Even numbers are divisible by 2, odd numbers are not.'\n"
+    "Similarly, we give the computer examples, and it learns patterns from them."
+)    
+
+st.subheader("Basic Machine Learning Terms")
+st.markdown("""
+- **x** → Input  
+- **y** → Output  
+- **x_train** → Data used to train the model (questions)  
+- **y_train** → Correct answers for training  
+- **x_test** → New data to test the model  
+- **y_test** → Actual answers for the test data  
+- **model.fit()** → Train the model with `x_train` and `y_train`  
+- **model.predict()** → Let the model guess answers for `x_test`  
+- **best_fit()** → The best version of the model (depends on context)
+""")
+
+st.info("This is a simplified view to help beginners understand the concept. As you learn more, you'll dive into algorithms, data preprocessing, model evaluation, and more.")
+
+print("""Let try to understand samething with an example Teaching the Computer About Fruits
+            Let’s say we want the computer to guess the fruit based on color and size.""")
+
+print ("""--Red color-->big in size --->Apple
+        Yellow color--->Small in size---> Banana
+        green color---> big in size ---->Watermelon""")    
+
+#here inputs are color and size
+#output are fruit name
+
+x=[['Red','big'] , ['yellow', 'small'] ,['Green','Big']]
+#here we have provided two inputs in same thing like color and size
+#so here we will apply the compreshive list
+colors= [i[0] for i in x ]
+sizes=[i[1] for i in x]
+# Separate color and size columns
+y=["Apple","Banana","Watermelon"]
+
+st.subheader(" How to understand computer about diffreent values")
+st.write(
+#now we will apply label encoder
+""" We will use label enocoder :- A Label Encoder is a tool used in machine learning to convert categorical data (like strings or labels) 
+into numerical form so algorithms can process them. This is especially important because most ML models require numeric input.
+
+A tool that turns words into numbers
+
+ """
+)
+
+# Encode strings to numbers
+le_color = LabelEncoder()
+le_size = LabelEncoder()
+
+st.subheading("tranform the data")
+st.write("fit_transform() = It learns all the labels and converts them at the same time")
+
+# Encode each feature
+color_encoded = le_color.fit_transform(colors)   # e.g., Red → 2
+size_encoded = le_size.fit_transform(sizes)  
+
+print("Encoded Colors:", color_encoded)
+print("Encoded Sizes:", size_encoded)
+
+encoded_features = list(zip(color_encoded, size_encoded))
+
+x_train,x_test,y_train, y_test=train_test_split(encoded_features, y, test_size=0.33)
+
+model = DecisionTreeClassifier()
+model.fit(x_train,y_train) #It’s like practice time — the computer studies the examples.
+#model.predict([["Red", "Big"]])  # It might say "Apple"
+input_color = "Red"
+input_size = "Big"
+
+encoded_input = [
+    le_color.transform([input_color])[0],
+    le_size.transform([input_size])[0]
+]
+
+# Prediction
+prediction = model.predict([encoded_input])[0]
+print(f"The predicted fruit for {input_color}, {input_size} is: {prediction}")
