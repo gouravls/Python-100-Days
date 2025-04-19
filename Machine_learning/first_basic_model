@@ -1,0 +1,126 @@
+import pandas as pd  
+import matplotlib.pyplot as plt 
+import seaborn as sns 
+import gradio as gr 
+import streamlit as st 
+import ollama 
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
+
+# Page title
+st.title("🧠 Introduction to Machine Learning with Streamlit")
+
+# Section: What is ML?
+st.header("🔍 What is Machine Learning?")
+st.write("""
+Machine learning is a way of teaching computers to make decisions or predictions based on data, "
+    "similar to how we learn from examples
+""")
+
+st.subheader("📘 Simple Example")
+st.markdown("""
+Imagine teaching your child to identify whether a number is **even** or **odd**:
+
+- 2 is even  
+- 3 is odd  
+- 4 is even  
+
+Eventually, they learn that **even numbers are divisible by 2**.  
+Similarly, we give examples to the computer, and it **learns patterns** to make predictions.
+""")
+
+# Section: ML Terminology
+st.subheader("🔑 Basic ML Terminology")
+st.markdown("""
+- **x** → Input (features/data)  
+- **y** → Output (target/label)  
+- **x_train** → Inputs used for training  
+- **y_train** → Labels used for training  
+- **x_test** → Inputs for testing the model  
+- **y_test** → Correct answers for test data  
+- **model.fit()** → Train the model  
+- **model.predict()** → Ask the model to make predictions  
+""")
+
+st.info("ML is like giving the computer lots of examples and letting it find patterns.")
+
+# Section: Fruit Prediction Example
+st.header("🍎 Teaching the Computer with a Fruit Example")
+
+st.write("""
+Let's train a simple ML model that predicts the fruit name based on two inputs:
+- **Color**
+- **Size**
+
+### Our Example Data
+""")
+
+st.code("""
+Red + Big     → Apple  
+Yellow + Small → Banana  
+Green + Big    → Watermelon
+""")
+
+# Data preparation
+x = [['Red','big'], ['yellow', 'small'], ['Green','Big']]
+y = ["Apple", "Banana", "Watermelon"]
+
+colors = [i[0] for i in x]
+sizes = [i[1] for i in x]
+
+# Encoding
+le_color = LabelEncoder()
+le_size = LabelEncoder()
+
+color_encoded = le_color.fit_transform(colors)
+size_encoded = le_size.fit_transform(sizes)
+
+st.subheader("🛠️ Why Do We Encode Data?")
+st.write("""
+Most ML models work with **numbers**, not **text**. So, we convert categorical data (like 'Red', 'Big') into numbers using a technique called **Label Encoding**.
+""")
+
+st.code("""
+Red → 2  
+Yellow → 1  
+Green → 0  
+
+Big → 0  
+Small → 1
+""", language='python')
+
+encoded_features = list(zip(color_encoded, size_encoded))
+
+# Train/test split
+x_train, x_test, y_train, y_test = train_test_split(encoded_features, y, test_size=0.33)
+
+# Model training
+model = DecisionTreeClassifier()
+model.fit(x_train, y_train)
+
+# Interaction
+st.header("🎯 Try the Model Yourself!")
+
+selected_color = st.selectbox("Choose a color", le_color.classes_)
+selected_size = st.selectbox("Choose a size", le_size.classes_)
+
+if st.button("Predict Fruit"):
+    encoded_input = [
+        le_color.transform([selected_color])[0],
+        le_size.transform([selected_size])[0]
+    ]
+    prediction = model.predict([encoded_input])[0]
+    st.success(f"The predicted fruit is: **{prediction}**")
+
+# Summary
+st.header("📌 Summary")
+st.write("""
+- You built a basic machine learning model using **Decision Tree Classifier**.
+- Used **Label Encoding** to convert categories to numbers.
+- Understood the difference between training and testing data.
+- Interacted with the model to predict fruit names.
+
+🎉 Congratulations on your first ML model!
+""")
