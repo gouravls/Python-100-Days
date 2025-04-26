@@ -1,0 +1,86 @@
+import pandas as pd 
+import numpy as np 
+import matplotlib.pyplot as plt 
+import seaborn as sns 
+import re 
+import os
+import streamlit as st 
+import gradio as gr 
+import scipy as sc
+from sklearn.model_selection import train_test_split
+import logging
+from dotenv import load_dotenv
+import google.generativeai as genai
+
+# Setting up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Load environment variables
+load_dotenv()
+
+# Load API Key
+try:
+    api_key = os.environ["GOOGLE_API_KEY"]
+    genai.configure(api_key=api_key)
+    logging.info("API key is configured")
+except KeyError:
+    logging.error("Google API key not found")
+    exit()
+except Exception as e:
+    logging.error(f"There is some issue with API key: {str(e)}")
+    exit()
+
+# Initialize Model
+try:
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    logging.info("Model is initialized")
+except Exception as e:
+    logging.error(f"Model not initialized: {str(e)}")
+    exit()
+
+# Function to create airflow prompt
+def airflow_operator_selection(sql_query):
+    prompt = f"""
+You are an Airflow (Cloud Composer) expert. Based on the given user input, suggest which operator from the following list should be used:
+- BashOperator
+- DummyOperator
+- GoogleCloudStorageObjectSensor
+- Models
+- Variables
+- GCSCreateBucketOperator
+- GCSToGCSOperator
+- ExternalTaskSensor
+- BigQueryCreateEmptyDataSetOperator
+- BigQueryCreateEmptyTableOperator
+- BigQueryCreateExternalTableOperator
+- PythonOperator
+- DataprocJobOperator
+- DataprocWorkflowOperator
+- XComOperator
+
+Input Query:
+{sql_query}
+
+Remember: Only suggest from the above operators. Explain briefly if needed.
+"""
+    return prompt
+
+# Streamlit app
+st.header("Airflow Operator Selection App")
+st.subheader("Enter your query to get operator suggestions")
+
+user_text = st.text_area("Enter your message")
+submit_button = st.button("Submit")
+
+if submit_button and user_text:
+    prompt = airflow_operator_selection(user_text)
+
+    
+    # Call the model
+    try:
+        response = model.generate_content(prompt)
+        answer = response.text
+        st.subheader("Suggested Operator(s):")
+        st.write(answer)
+    except Exception as e:
+        st.error(f"Error generating response: {str(e)}")
