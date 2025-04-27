@@ -1,0 +1,77 @@
+import pandas as pd 
+import matplotlib.pyplot as plt 
+import numpy as np 
+import seaborn as sns 
+import re 
+import os
+from dotenv import load_dotenv
+import logging
+import streamlit as st 
+import gradio as gr
+import google.generativeai as genai
+import scipy as sc 
+from sklearn.model_selection import train_test_split
+
+# Logging setup
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Load environment variables
+load_dotenv()
+
+# Load API key
+try:
+    api_key = os.environ["GOOGLE_API_KEY"]
+    genai.configure(api_key=api_key)
+    logging.info("API key loaded successfully")
+except KeyError:
+    logging.error("API key not found")
+    exit()
+except Exception as e:
+    logging.error(f"There is some issue with the API key: {str(e)}")
+    exit()
+
+# Load the model
+try:
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+    logging.info("Successfully initialized Gemini 1.5 model")
+except Exception as e:
+    logging.error(f"Model not initialized: {str(e)}")
+    exit()
+
+# Function to format the prompt
+def treat_as_student(user_query):
+    prompt = f'''Think you are a 7th standard student and give the output in tabular format
+related to all questions asked by the user about AI and Machine Learning.
+If any question asked outside AI and Machine Learning, simply say "The question is not relevant to the system."
+Question: {user_query}'''
+    return prompt
+
+# Streamlit UI
+st.header("AI and Machine Learning App")
+st.subheader("Enter your question related to AI & Machine Learning") 
+
+user_text = st.text_area("Enter your question here:")
+path_to_save = st.text_input("Enter the path (with .csv file name) where you want to save the result:")
+
+submit_button = st.button("Submit")
+
+if submit_button and user_text:
+    prompt = treat_as_student(user_text)
+    try:
+        response = model.generate_content(prompt)
+        answer = response.text
+        
+        st.subheader("Suggested Output")
+        st.write(answer)
+        
+        # Saving to Pandas DataFrame
+        df = pd.DataFrame({'Question': [user_text], 'Answer': [answer]})
+        
+        if path_to_save:
+            df.to_csv(path_to_save, index=False)
+            st.success(f"Result successfully saved to {path_to_save}")
+        else:
+            st.warning("No path provided. Data not saved.")
+        
+    except Exception as e:
+        st.error(f"Error generating response: {str(e)}")
