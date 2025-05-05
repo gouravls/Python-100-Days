@@ -1,0 +1,11 @@
+How to create virtual environmnet in python 
+
+python -m venv vtest
+
+How to activate virtual environmnet in python 
+
+.\vtest\Scripts\activate
+
+If facing an error then how to fix that
+
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
