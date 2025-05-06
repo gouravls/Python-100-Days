@@ -1,0 +1,9 @@
+restaurant project
+3 files:-
+1:- order.py
+2:- main.py
+3: order_router.py
+
+for running the app via postman
+uvicorn main:app --reload
+
